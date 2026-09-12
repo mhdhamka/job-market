@@ -1,8 +1,37 @@
 import sys
+import pathlib
+import pytest
+import duckdb
 from pathlib import Path
 from fastapi.testclient import TestClient
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+@pytest.fixture(autouse=True)
+def setup_test_db():
+    """Ensure a dummy DuckDB and necessary tables exist before any test runs."""
+    db_path = pathlib.Path("data/job_market.duckdb")
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Create the database and the 'jobs' table with the standard schema
+    if not db_path.exists():
+        conn = duckdb.connect(str(db_path))
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS jobs (
+                id VARCHAR,
+                title VARCHAR,
+                company VARCHAR,
+                location VARCHAR,
+                description VARCHAR,
+                salary_min DOUBLE,
+                salary_max DOUBLE,
+                posted_date DATE,
+                source VARCHAR,
+                url VARCHAR
+            )
+        """)
+        conn.close()
+
 from src.api.main import app
 
 client = TestClient(app)

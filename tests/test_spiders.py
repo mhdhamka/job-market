@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Add project root to path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from src.scrapers.spiders.linkedin_spider import LinkedInSpider
 from src.scrapers.spiders.myfuturejobs_spider import MyFutureJobsSpider
