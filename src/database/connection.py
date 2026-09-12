@@ -7,6 +7,12 @@ DB_PATH = Path(__file__).resolve().parents[2] / "data" / "job_market.duckdb"
 def get_connection(read_only: bool = False):
     """Creates and returns a connection to the local DuckDB database."""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    
+    # If read-only is requested but the database file doesn't exist yet,
+    # fallback to read-write so DuckDB can initialize the file safely.
+    if read_only and not DB_PATH.exists():
+        read_only = False
+        
     return duckdb.connect(database=str(DB_PATH), read_only=read_only)
 
 def init_db():

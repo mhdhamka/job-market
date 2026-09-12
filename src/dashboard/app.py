@@ -47,15 +47,21 @@ st.title("Job Market Intelligence")
 st.markdown("<p style='color: #5f6368; font-size: 1.1rem; margin-top: -10px;'>Local-first analytics tracking multi-source roles (MyFutureJobs, RemoteOK, LinkedIn).</p>", unsafe_allow_html=True)
 st.markdown("---")
 
-# Load data from DuckDB with safe fallback if created_at is missing
+# Load data from DuckDB with safe check for table existence
 @st.cache_data
 def load_data():
-    con = get_connection(read_only=True)
+    con = get_connection(read_only=False)
     try:
-        df = con.execute("SELECT * FROM job_listings ORDER BY created_at DESC").fetchdf()
+        # Check if table exists first
+        table_exists = con.execute("SELECT count(*) FROM information_schema.tables WHERE table_name = 'job_listings'").fetchone()[0] > 0
+        if not table_exists:
+            df = pd.DataFrame()
+        else:
+            df = con.execute("SELECT * FROM job_listings ORDER BY created_at DESC").fetchdf()
     except Exception:
-        df = con.execute("SELECT * FROM job_listings").fetchdf()
-    con.close()
+        df = pd.DataFrame()
+    finally:
+        con.close()
     return df
 
 df_jobs = load_data()
