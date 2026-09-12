@@ -62,8 +62,7 @@ jobs:
       env:
         PYTHONPATH: .
       run: |
-        python src/pipelines/daily_job_pipeline.py 
-        # Note: Adjust "src/pipelines/daily_job_pipeline.py" if your script is located in a different folder!
+        python src/workflows/daily_job_pipeline.py 
 
     - name: Commit and push updated database
       run: |
