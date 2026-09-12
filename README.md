@@ -67,7 +67,14 @@ pip install -r requirements.txt
 
 ```
 
-### 2. Running Services
+### 2. Run the Daily Job Pipeline (Data Ingestion)
+```Bash
+# Scrape and store initial job data into DuckDB
+python src/workflows/daily_job_pipeline.py
+
+```
+
+### 3. Running Services
 
 #### Run the FastAPI Backend
 
