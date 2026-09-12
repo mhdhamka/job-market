@@ -95,7 +95,7 @@ pytest tests/
 ## Project Structure
 
 ```text
-job-market-intelligence/
+job-market/
 │
 ├── .env.example                # Template for environment variables
 ├── .gitignore                  # Ignore venv, DuckDB files, logs, cache

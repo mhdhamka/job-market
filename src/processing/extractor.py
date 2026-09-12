@@ -1,5 +1,6 @@
 import re
 import numpy as np
+from src.processing.cleaner import TextCleaner
 
 class JobExtractor:
     def __init__(self):
@@ -31,6 +32,9 @@ class JobExtractor:
         elif not isinstance(text, str):
             text = str(text)
 
+        # Clean text to strip HTML tags and decode entities before matching
+        text = TextCleaner.clean_text(text)
+
         text_lower = text.lower()
         found = [
             skill.upper() for skill in self.target_skills 
@@ -49,6 +53,9 @@ class JobExtractor:
             text = " ".join(str(item) for item in text.flatten())
         elif not isinstance(text, str):
             text = str(text)
+
+        # Clean text to strip HTML tags and decode entities before regex search
+        text = TextCleaner.clean_text(text)
 
         text_lower = text.lower()
         # Matches patterns like RM 3,500 - RM 5,000 or RM3500-5000
