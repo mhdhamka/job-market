@@ -10,17 +10,31 @@ def get_connection(read_only: bool = False):
     return duckdb.connect(database=str(DB_PATH), read_only=read_only)
 
 def init_db():
-    """Initializes required tables if they don't already exist."""
+    """Initializes required tables and ensures all columns exist if they don't already."""
     con = get_connection(read_only=False)
     con.execute("""
         CREATE TABLE IF NOT EXISTS job_listings (
             id INTEGER,
             title VARCHAR,
+            source VARCHAR,
+            location VARCHAR,
             skills VARCHAR[],
             salary_range VARCHAR,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    
+    # Safely add columns if running against an older existing schema
+    try:
+        con.execute("ALTER TABLE job_listings ADD COLUMN source VARCHAR;")
+    except Exception:
+        pass  # Column already exists
+        
+    try:
+        con.execute("ALTER TABLE job_listings ADD COLUMN location VARCHAR;")
+    except Exception:
+        pass  # Column already exists
+
     con.close()
 
 def get_next_id() -> int:

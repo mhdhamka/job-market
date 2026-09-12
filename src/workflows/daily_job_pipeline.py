@@ -2,12 +2,12 @@ import sys
 from pathlib import Path
 from prefect import flow, task
 
-sys.path.append(str(Path(__file__).resolve().parents[1]))
+sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from database.connection import get_connection, init_db
-from scrapers.spiders.myfuturejobs_spider import MyFutureJobsSpider
-from scrapers.spiders.remoteok_spider import RemoteOKSpider
-from scrapers.spiders.linkedin_spider import LinkedInSpider
+from src.database.connection import get_connection, init_db
+from src.scrapers.spiders.myfuturejobs_spider import MyFutureJobsSpider
+from src.scrapers.spiders.remoteok_spider import RemoteOKSpider
+from src.scrapers.spiders.linkedin_spider import LinkedInSpider
 
 @task(name="Initialize Database")
 def setup_database():
@@ -18,7 +18,10 @@ def setup_database():
 def run_extraction_pipeline():
     con = get_connection(read_only=False)
     processed_count = 0
-    base_id = 401  # Starting ID offset for the new batch
+
+    # Dynamically determine the starting ID to avoid primary key conflicts
+    res = con.execute("SELECT MAX(id) FROM job_listings").fetchone()
+    base_id = (res[0] if res and res[0] is not None else 0) + 1
 
     # 1. Fetch from Local Portal (MyFutureJobs)
     print("--- Running MyFutureJobs Spider ---")
@@ -27,13 +30,20 @@ def run_extraction_pipeline():
     
     for job in local_jobs:
         con.execute("""
-            INSERT INTO job_listings (id, title, skills, salary_range)
-            VALUES (?, ?, ?, ?)
-        """, [base_id, job["title"], job["skills"], job["salary_range"]])
+            INSERT INTO job_listings (id, title, source, location, skills, salary_range)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+            base_id, 
+            job.get("title"), 
+            "MyFutureJobs", 
+            job.get("location", "Malaysia"), 
+            job.get("skills"), 
+            job.get("salary_range")
+        ])
         
         processed_count += 1
         base_id += 1
-        print(f"Stored Local: {job['title']} -> Skills: {job['skills']}")
+        print(f"Stored Local: {job.get('title')} -> Skills: {job.get('skills')}")
 
     # 2. Fetch from Global API (RemoteOK)
     print("--- Running RemoteOK Spider ---")
@@ -42,13 +52,20 @@ def run_extraction_pipeline():
     
     for job in global_jobs:
         con.execute("""
-            INSERT INTO job_listings (id, title, skills, salary_range)
-            VALUES (?, ?, ?, ?)
-        """, [base_id, job["title"], job["skills"], job["salary_range"]])
+            INSERT INTO job_listings (id, title, source, location, skills, salary_range)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+            base_id, 
+            job.get("title"), 
+            "RemoteOK", 
+            job.get("location", "Global/Remote"), 
+            job.get("skills"), 
+            job.get("salary_range")
+        ])
         
         processed_count += 1
         base_id += 1
-        print(f"Stored Global: {job['title']} -> Skills: {job['skills']}")
+        print(f"Stored Global: {job.get('title')} -> Skills: {job.get('skills')}")
 
     # 3. Fetch from LinkedIn
     print("--- Running LinkedIn Spider ---")
@@ -57,13 +74,20 @@ def run_extraction_pipeline():
     
     for job in linkedin_jobs:
         con.execute("""
-            INSERT INTO job_listings (id, title, skills, salary_range)
-            VALUES (?, ?, ?, ?)
-        """, [base_id, job["title"], job["skills"], job["salary_range"]])
+            INSERT INTO job_listings (id, title, source, location, skills, salary_range)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+            base_id, 
+            job.get("title"), 
+            "LinkedIn", 
+            job.get("location", "Malaysia"), 
+            job.get("skills"), 
+            job.get("salary_range")
+        ])
         
         processed_count += 1
         base_id += 1
-        print(f"Stored LinkedIn: {job['title']} -> Skills: {job['skills']}")
+        print(f"Stored LinkedIn: {job.get('title')} -> Skills: {job.get('skills')}")
 
     con.close()
     return f"Successfully processed and stored {processed_count} jobs from multi-source pipeline (MyFutureJobs, RemoteOK, LinkedIn)."
