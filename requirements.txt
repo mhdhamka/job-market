@@ -1,0 +1,9 @@
+scrapy
+beautifulsoup4
+prefect
+duckdb
+fastapi
+streamlit
+uvicorn
+pandas
+pytest
