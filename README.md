@@ -1,7 +1,7 @@
 
 <div align="center">
 
-# Job Market Intelligence Engine
+# Job Market Engine
 
 > Automated Job Scraper, NLP Extractor, Data Warehouse, and Interactive Analytics Dashboard
 
