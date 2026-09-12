@@ -23,6 +23,19 @@ def init_db():
     """)
     con.close()
 
+def get_next_id() -> int:
+    """Dynamically calculates the next available primary key ID based on existing records."""
+    con = get_connection(read_only=True)
+    try:
+        result = con.execute("SELECT MAX(id) FROM job_listings").fetchone()
+        max_id = result[0] if result and result[0] is not None else 0
+        return max_id + 1
+    except Exception:
+        # Fallback start ID if table is empty or doesn't exist yet
+        return 1
+    finally:
+        con.close()
+
 if __name__ == "__main__":
     init_db()
     print(f"Database initialized successfully at: {DB_PATH}")
