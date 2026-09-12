@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 class JobExtractor:
     def __init__(self):
@@ -23,23 +24,45 @@ class JobExtractor:
     def extract_skills(self, text: str) -> list:
         if not text:
             return []
+        
+        # Handle case where text might accidentally be a numpy array or non-string sequence
+        if isinstance(text, np.ndarray):
+            text = " ".join(str(item) for item in text.flatten())
+        elif not isinstance(text, str):
+            text = str(text)
+
         text_lower = text.lower()
         found = [
             skill.upper() for skill in self.target_skills 
             if re.search(r'\b' + re.escape(skill) + r'\b', text_lower)
         ]
-        return list(set(found)) # Remove duplicates
+        
+        # Ensure native python list is returned (safeguard against any numpy/set serialization issues)
+        unique_skills = list(set(found))
+        return [str(s) for s in unique_skills]
 
     def extract_salary(self, text: str) -> str:
         if not text:
             return "Not Specified"
+            
+        if isinstance(text, np.ndarray):
+            text = " ".join(str(item) for item in text.flatten())
+        elif not isinstance(text, str):
+            text = str(text)
+
         text_lower = text.lower()
         # Matches patterns like RM 3,500 - RM 5,000 or RM3500-5000
         salary_match = re.search(r'rm\s*[\d,]+\s*(?:-\s*rm?\s*[\d,]+)?', text_lower)
-        return salary_match.group(0).upper() if salary_match else "Not Specified"
+        return str(salary_match.group(0).upper()) if salary_match else "Not Specified"
 
     def parse_job(self, raw_text: str) -> dict:
+        skills = self.extract_skills(raw_text)
+        
+        # Final explicit check to convert numpy arrays if they exist in output dictionary
+        if isinstance(skills, np.ndarray):
+            skills = skills.tolist()
+
         return {
-            "skills": self.extract_skills(raw_text),
+            "skills": skills,
             "salary_range": self.extract_salary(raw_text)
         }
