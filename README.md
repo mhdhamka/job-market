@@ -146,8 +146,10 @@ job-market/
 │
 └── tests/                      # Automated tests
     ├── __init__.py
+    ├── test_api.py
+    ├── test_cleaner.py
     ├── test_extractor.py
-    └── test_api.py
+    └── test_spiders.py
 
 ```
 
