@@ -55,8 +55,8 @@ To run the complete Job Market Intelligence stack locally, follow these steps to
 ### 1. Environment & Dependencies Setup
 ```bash
 # Clone the repository
-git clone [https://github.com/mhdhamka/job-market.git]
-cd job-market-intelligence
+git clone https://github.com/mhdhamka/job-market.git
+cd job-market
 
 # Create and activate virtual environment
 python -m venv venv
@@ -162,14 +162,6 @@ Contributions are always welcome! If you'd like to improve this project, please 
 * Commit your Changes (`git commit -m "add: some amazing feature"`)
 * Push to the Branch (`git push origin feature/AmazingFeature`)
 * Open a Pull Request
-
----
-
-# License
-
-This project is released under the MIT License.
-
-Feel free to learn from, fork, and improve upon this project.
 
 ---
 
