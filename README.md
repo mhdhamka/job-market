@@ -50,7 +50,7 @@ An end-to-end data pipeline and intelligence platform designed to scrape, proces
 
 ## Getting Started Locally
 
-To run the complete Job Market Intelligence stack locally, follow these steps to set up your environment and dependencies.
+To run the complete Job Market stack locally, follow these steps to set up your environment and dependencies.
 
 ### 1. Environment & Dependencies Setup
 ```bash
