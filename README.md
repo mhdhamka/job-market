@@ -5,7 +5,7 @@
 
 > Automated Job Scraper, NLP Extractor, Data Warehouse, and Interactive Analytics Dashboard
 
-[Documentation](./docs) · [Report Bug](https://github.com/mhdhamka/job-market-intelligence/issues) · [Request Feature](https://github.com/mhdhamka/job-market-intelligence/issues)
+[Documentation](./docs) · [Live Demo](https://mhdhamka.github.io/job-market/) · [Report Bug](https://github.com/mhdhamka/job-market/issues) · [Request Feature](https://github.com/mhdhamka/job-market/issues)
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?style=for-the-badge&logo=fastapi&logoColor=white)
@@ -149,6 +149,7 @@ job-market/
     ├── test_api.py
     ├── test_cleaner.py
     ├── test_extractor.py
+    ├── test_matcher.py
     └── test_spiders.py
 
 ```
