@@ -13,11 +13,11 @@ def setup_test_db():
     db_path = pathlib.Path("data/job_market.duckdb")
     db_path.parent.mkdir(parents=True, exist_ok=True)
     
-    # Create the database, the 'jobs' table, and insert a dummy row
+    # Create the database, the 'job_listings' table, and insert a dummy row
     if not db_path.exists():
         conn = duckdb.connect(str(db_path))
         conn.execute("""
-            CREATE TABLE IF NOT EXISTS jobs (
+            CREATE TABLE IF NOT EXISTS job_listings (
                 id VARCHAR,
                 title VARCHAR,
                 company VARCHAR,
@@ -25,14 +25,14 @@ def setup_test_db():
                 description VARCHAR,
                 salary_min DOUBLE,
                 salary_max DOUBLE,
-                posted_date DATE,
+                created_at TIMESTAMP,
                 source VARCHAR,
                 url VARCHAR
             )
         """)
         # Insert a valid test record so queries don't return unexpected errors or empty formatting issues
         conn.execute("""
-            INSERT INTO jobs VALUES (
+            INSERT INTO job_listings VALUES (
                 'test-id-1', 
                 'Software Engineer', 
                 'Tech Corp', 
@@ -40,7 +40,7 @@ def setup_test_db():
                 'Python development', 
                 50000.0, 
                 80000.0, 
-                '2026-01-01', 
+                CURRENT_TIMESTAMP, 
                 'test', 
                 'http://example.com'
             )
