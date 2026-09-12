@@ -6,6 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from database.connection import get_connection, init_db
 from scrapers.spiders.myfuturejobs_spider import MyFutureJobsSpider
+from scrapers.spiders.remoteok_spider import RemoteOKSpider
 
 @task(name="Initialize Database")
 def setup_database():
@@ -14,25 +15,42 @@ def setup_database():
 
 @task(name="Scrape and Process Job Postings")
 def run_extraction_pipeline():
-    # Instantiate the spider to pull live listings (with fallback resilience)
-    spider = MyFutureJobsSpider()
-    scraped_jobs = spider.fetch_jobs("python developer")
-    
     con = get_connection(read_only=False)
-    
     processed_count = 0
-    # Loop through scraped entries and insert into DuckDB warehouse
-    for i, job in enumerate(scraped_jobs, start=301):
+    base_id = 401  # Starting ID offset for the new batch
+
+    # 1. Fetch from Local Portal (MyFutureJobs)
+    print("--- Running MyFutureJobs Spider ---")
+    local_spider = MyFutureJobsSpider()
+    local_jobs = local_spider.fetch_jobs("python developer")
+    
+    for job in local_jobs:
         con.execute("""
             INSERT INTO job_listings (id, title, skills, salary_range)
             VALUES (?, ?, ?, ?)
-        """, [i, job["title"], job["skills"], job["salary_range"]])
+        """, [base_id, job["title"], job["skills"], job["salary_range"]])
         
         processed_count += 1
-        print(f"Processed & Stored: {job['title']} -> Skills: {job['skills']}")
+        base_id += 1
+        print(f"Stored Local: {job['title']} -> Skills: {job['skills']}")
+
+    # 2. Fetch from Global API (RemoteOK)
+    print("--- Running RemoteOK Spider ---")
+    global_spider = RemoteOKSpider()
+    global_jobs = global_spider.fetch_jobs(limit=5)
+    
+    for job in global_jobs:
+        con.execute("""
+            INSERT INTO job_listings (id, title, skills, salary_range)
+            VALUES (?, ?, ?, ?)
+        """, [base_id, job["title"], job["skills"], job["salary_range"]])
+        
+        processed_count += 1
+        base_id += 1
+        print(f"Stored Global: {job['title']} -> Skills: {job['skills']}")
 
     con.close()
-    return f"Successfully processed and stored {processed_count} jobs from live pipeline."
+    return f"Successfully processed and stored {processed_count} jobs from multi-source pipeline."
 
 @flow(name="Daily Job Market Intelligence Pipeline")
 def daily_pipeline():
