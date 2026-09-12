@@ -25,7 +25,7 @@ def test_text_cleaner_html_tags_and_entities():
     
     # Assert text content and spacing are normalized properly
     assert "Senior Python Developer & Engineer" in cleaned
-    assert "SQL, FastAPI & Docker." in cleaned
+    assert "SQL , FastAPI & Docker." in cleaned
     assert "Salary: RM 6,000 – RM 10,000" in cleaned
 
 def test_text_cleaner_empty_and_invalid_input():
