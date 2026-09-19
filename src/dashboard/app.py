@@ -44,7 +44,7 @@ st.markdown("""
 
 # App Header
 st.title("Job Market Intelligence")
-st.markdown("<p style='color: #5f6368; font-size: 1.1rem; margin-top: -10px;'>Local-first analytics tracking multi-source roles (MyFutureJobs, RemoteOK, LinkedIn).</p>", unsafe_allow_html=True)
+st.markdown("<p style='color: #5f6368; font-size: 1.1rem; margin-top: -10px;'>Local-first analytics tracking multi-source roles (MyFutureJobs, RemoteOK, LinkedIn, JobStreet, Indeed).</p>", unsafe_allow_html=True)
 st.markdown("---")
 
 # Load data from DuckDB with safe check for table existence
@@ -107,7 +107,9 @@ else:
     st.sidebar.markdown("---")
     st.sidebar.subheader("Resume Matcher")
     user_skills_input = st.sidebar.text_input("Your Skills (comma separated)", placeholder="Python, SQL, Docker, FastAPI")
-    user_skills_list = [s.strip() for s in user_skills_input.split(",") if s.strip()]
+    
+    # Safely convert user input into a clean Python list
+    user_skills_list = [s.strip() for s in user_skills_input.split(",") if s.strip()] if user_skills_input else []
 
     # Apply Filters to DataFrame
     filtered_df = df_jobs.copy()
@@ -132,7 +134,11 @@ else:
         missing_details = []
         
         for job_skills in filtered_df['skills']:
-            match_result = JobMatcher.calculate_match(user_skills_list, job_skills)
+            # Ensure safe standard Python list conversion for both arguments to avoid NumPy array truth-value errors
+            clean_user_skills = list(user_skills_list)
+            clean_job_skills = list(job_skills) if job_skills is not None else []
+            
+            match_result = JobMatcher.calculate_match(clean_user_skills, clean_job_skills)
             match_percentages.append(match_result['match_percentage'])
             matching_details.append(", ".join(match_result['matching_skills']))
             missing_details.append(", ".join(match_result['missing_skills']))
