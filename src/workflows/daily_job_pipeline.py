@@ -8,6 +8,7 @@ from src.database.connection import get_connection, init_db
 from src.scrapers.spiders.myfuturejobs_spider import MyFutureJobsSpider
 from src.scrapers.spiders.remoteok_spider import RemoteOKSpider
 from src.scrapers.spiders.linkedin_spider import LinkedInSpider
+from src.scrapers.spiders.jobstreet_spider import JobStreetSpider
 
 @task(name="Initialize Database")
 def setup_database():
@@ -89,8 +90,30 @@ def run_extraction_pipeline():
         base_id += 1
         print(f"Stored LinkedIn: {job.get('title')} -> Skills: {job.get('skills')}")
 
+    # 4. Fetch from JobStreet
+    print("--- Running JobStreet Spider ---")
+    jobstreet_spider = JobStreetSpider()
+    jobstreet_jobs = jobstreet_spider.fetch_jobs("software engineer", "malaysia")
+    
+    for job in jobstreet_jobs:
+        con.execute("""
+            INSERT INTO job_listings (id, title, source, location, skills, salary_range)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, [
+            base_id, 
+            job.get("title"), 
+            "JobStreet", 
+            "Malaysia", 
+            job.get("skills"), 
+            job.get("salary_range")
+        ])
+        
+        processed_count += 1
+        base_id += 1
+        print(f"Stored JobStreet: {job.get('title')} -> Skills: {job.get('skills')}")
+
     con.close()
-    return f"Successfully processed and stored {processed_count} jobs from multi-source pipeline (MyFutureJobs, RemoteOK, LinkedIn)."
+    return f"Successfully processed and stored {processed_count} jobs from multi-source pipeline (MyFutureJobs, RemoteOK, LinkedIn, JobStreet)."
 
 @flow(name="Daily Job Market Intelligence Pipeline")
 def daily_pipeline():

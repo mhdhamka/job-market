@@ -5,21 +5,26 @@ from src.processing.cleaner import TextCleaner
 class JobExtractor:
     def __init__(self):
         self.target_skills = [
-            # Programming Languages
-            'python', 'java', 'javascript', 'typescript', 'c++', 'c#', 'go', 'golang', 'scala', 'sql',
-            
-            # Data Engineering & Big Data
+            # Programming Languages (Including broader languages & scripting)
+            'python', 'java', 'javascript', 'typescript', 'c++', 'c#', 'c', 'go', 'golang', 
+            'scala', 'rust', 'ruby', 'php', 'swift', 'kotlin', 'sql', 'bash', 'shell',
+
+            # Data Engineering, AI & Big Data
             'spark', 'kafka', 'airflow', 'prefect', 'dbt', 'duckdb', 'snowflake', 'bigquery', 
-            'redshift', 'pandas', 'numpy', 'hadoop', 'hive', 'etl',
-            
+            'redshift', 'pandas', 'numpy', 'hadoop', 'hive', 'etl', 'pytorch', 'tensorflow', 
+            'langchain', 'openai', 'llm', 'scikit-learn',
+
             # Databases & Caching
-            'postgresql', 'mysql', 'mongodb', 'redis', 'cassandra', 'elasticsearch', 'sqlite',
-            
+            'postgresql', 'mysql', 'mongodb', 'redis', 'cassandra', 'elasticsearch', 'sqlite', 
+            'dynamodb', 'oracle',
+
             # Cloud, DevOps & Infrastructure
-            'aws', 'gcp', 'azure', 'docker', 'kubernetes', 'terraform', 'ci/cd', 'git', 'linux', 'cloud',
-            
-            # Backend & Frontend Frameworks
-            'fastapi', 'flask', 'django', 'spring boot', 'node.js', 'react', 'next.js', 'angular', 'vue', 'laravel'
+            'aws', 'gcp', 'azure', 'docker', 'kubernetes', 'terraform', 'ci/cd', 'git', 
+            'linux', 'cloud', 'ansible', 'jenkins', 'github actions', 'prometheus', 'grafana',
+
+            # Backend, Frontend & Mobile Frameworks
+            'fastapi', 'flask', 'django', 'spring boot', 'node.js', 'express', 'react', 
+            'next.js', 'angular', 'vue', 'nuxt.js', 'laravel', 'flutter', 'react native'
         ]
 
     def extract_skills(self, text: str) -> list:
