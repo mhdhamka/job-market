@@ -12,7 +12,6 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![DuckDB](https://img.shields.io/badge/DuckDB-Database-FFF000?style=for-the-badge&logo=duckdb&logoColor=black)
 ![Scrapy](https://img.shields.io/badge/Scrapy-Web%20Scraping-121212?style=for-the-badge&logo=scrapy&logoColor=white)
-![Pytest](https://img.shields.io/badge/Pytest-Testing-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)
 
 </div>
 
