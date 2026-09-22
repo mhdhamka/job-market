@@ -123,8 +123,10 @@ job-market/
 │   │   ├── pipelines.py
 │   │   └── spiders/
 │   │       ├── __init__.py
-│   │       ├── myfuturejobs_spider.py
+│   │       ├── indeed_spider.py
+│   │       ├── jobstreet_spider.py
 │   │       ├── linkedin_spider.py
+│   │       ├── myfuturejobs_spider.py
 │   │       └── remoteok_spider.py
 │   │
 │   ├── processing/             # Data cleaning & NLP/Regex extraction
