@@ -18,6 +18,8 @@ def get_connection(read_only: bool = False):
 def init_db():
     """Initializes required tables and ensures all columns exist if they don't already."""
     con = get_connection(read_only=False)
+    
+    # 1. Market Job Listings Table (Existing)
     con.execute("""
         CREATE TABLE IF NOT EXISTS job_listings (
             id INTEGER,
@@ -41,10 +43,24 @@ def init_db():
     except Exception:
         pass  # Column already exists
 
+    # 2. Personal Job Applications Table (For Plasmo Extension / Tracking)
+    con.execute("""
+        CREATE TABLE IF NOT EXISTS job_applications (
+            id INTEGER,
+            job_title VARCHAR,
+            company VARCHAR,
+            source_platform VARCHAR,
+            job_url VARCHAR,
+            status VARCHAR DEFAULT 'Applied',
+            salary_range VARCHAR,
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     con.close()
 
 def get_next_id() -> int:
-    """Dynamically calculates the next available primary key ID based on existing records."""
+    """Dynamically calculates the next available primary key ID for job listings."""
     con = get_connection(read_only=True)
     try:
         result = con.execute("SELECT MAX(id) FROM job_listings").fetchone()
@@ -52,6 +68,18 @@ def get_next_id() -> int:
         return max_id + 1
     except Exception:
         # Fallback start ID if table is empty or doesn't exist yet
+        return 1
+    finally:
+        con.close()
+
+def get_next_application_id() -> int:
+    """Dynamically calculates the next available primary key ID for job applications."""
+    con = get_connection(read_only=True)
+    try:
+        result = con.execute("SELECT MAX(id) FROM job_applications").fetchone()
+        max_id = result[0] if result and result[0] is not None else 0
+        return max_id + 1
+    except Exception:
         return 1
     finally:
         con.close()
