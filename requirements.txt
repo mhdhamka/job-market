@@ -2,7 +2,7 @@ scrapy
 beautifulsoup4
 prefect
 duckdb
-fastapi
+fastapi<0.155
 streamlit
 uvicorn
 pandas
