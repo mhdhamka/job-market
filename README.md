@@ -1,7 +1,7 @@
 
 <div align="center">
 
-# Job Market Intelligence & Application Tracker
+# Job Market Intelligence 
 
 > Automated Job Scraper, NLP Extractor, Data Warehouse, and Interactive Analytics Dashboard
 

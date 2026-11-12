@@ -43,7 +43,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # App Header
-st.title("Job Market Intelligence & Application Tracker")
+st.title("Job Market Intelligence")
 st.markdown("<p style='color: #5f6368; font-size: 1.1rem; margin-top: -10px;'>Local-first analytics tracking multi-source roles and personal application pipeline.</p>", unsafe_allow_html=True)
 st.markdown("---")
 
