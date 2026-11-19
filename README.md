@@ -5,7 +5,7 @@
 
 > Automated Job Scraper, NLP Extractor, Data Warehouse, and Interactive Analytics Dashboard
 
-[Live Demo](https://jobmarketintel.streamlit.app/) · [Documentation](../docs/) · [Report Bug](https://github.com/mhdhamka/kerja-scraper/issues) · [Request Feature](https://github.com/mhdhamka/kerja-scraper/issues)
+[Live Demo](https://jobmarketintel.streamlit.app/) · [Documentation](./docs/) · [Report Bug](https://github.com/mhdhamka/kerja-scraper/issues) · [Request Feature](https://github.com/mhdhamka/kerja-scraper/issues)
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Plasmo](https://img.shields.io/badge/Plasmo-Extension-000000?style=for-the-badge&logo=plasmo&logoColor=white)
