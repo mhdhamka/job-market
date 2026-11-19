@@ -138,7 +138,7 @@ def run_extraction_pipeline():
     con.close()
     return f"Successfully processed and stored {processed_count} jobs from multi-source pipeline (MyFutureJobs, RemoteOK, LinkedIn, JobStreet, Indeed)."
 
-@flow(name="Daily Job Market Intelligence Pipeline")
+@flow(name="Daily Kerja Scraper Pipeline")
 def daily_pipeline():
     setup_database()
     result = run_extraction_pipeline()

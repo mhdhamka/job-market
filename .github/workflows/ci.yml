@@ -1,97 +1,110 @@
-name: CI & Daily Scraper Pipeline
+name: Kerja Scraper CI & Daily Scraper Pipeline
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: ["main", "master"]
   schedule:
-    - cron: '0 0 * * *'
-  workflow_dispatch: 
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
-        cache: 'pip'
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
 
-    - name: Run test suite
-      env:
-        PYTHONPATH: .
-      run: |
-        pytest -v tests/
+      - name: Run test suite
+        env:
+          PYTHONPATH: .
+        run: |
+          pytest -v tests/
 
   build-extension:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: extension/package-lock.json
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: extension/package-lock.json
 
-    - name: Install extension dependencies
-      run: |
-        cd extension
-        npm ci
+      - name: Install extension dependencies
+        working-directory: extension
+        run: npm ci
 
-    - name: Build Plasmo extension
-      run: |
-        cd extension
-        npm run build
+      - name: Build Plasmo extension
+        working-directory: extension
+        run: npm run build
 
   daily-scrape:
     needs: [build-and-test, build-extension]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    
+
+    concurrency:
+      group: kerja-scraper-daily-scrape
+      cancel-in-progress: false
+
     permissions:
-      contents: write 
+      contents: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
-        cache: 'pip'
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-    - name: Run daily job pipeline
-      env:
-        PYTHONPATH: .
-      run: |
-        python src/workflows/daily_job_pipeline.py 
+      - name: Run daily job pipeline
+        env:
+          PYTHONPATH: .
+        run: python src/workflows/daily_job_pipeline.py
 
-    - name: Commit and push updated database
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add -f data/job_market.duckdb
-        git diff --staged --quiet || git commit -m "chore: auto-update job market duckdb via daily pipeline"
-        git push
+      - name: Commit and push updated database
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -f data/job_market.duckdb
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update Kerja Scraper duckdb via daily pipeline"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+            git push origin "${GITHUB_REF_NAME}"
+          fi

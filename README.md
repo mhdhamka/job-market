@@ -1,11 +1,11 @@
 
 <div align="center">
 
-# Job Market Intelligence 
+# Kerja Scraper
 
 > Automated Job Scraper, NLP Extractor, Data Warehouse, and Interactive Analytics Dashboard
 
-[Documentation](./notebooks) · [Live Demo](https://jobmarketintel.streamlit.app/) · [Report Bug](https://github.com/mhdhamka/job-market/issues) · [Request Feature](https://github.com/mhdhamka/job-market/issues)
+[Live Demo](https://jobmarketintel.streamlit.app/) · [Documentation](../docs/) · [Report Bug](https://github.com/mhdhamka/kerja-scraper/issues) · [Request Feature](https://github.com/mhdhamka/kerja-scraper/issues)
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Plasmo](https://img.shields.io/badge/Plasmo-Extension-000000?style=for-the-badge&logo=plasmo&logoColor=white)
@@ -26,163 +26,12 @@ An end-to-end data pipeline and intelligence platform designed to scrape, proces
 
 ## Key Features
 
-* **Browser Extension Tracker:** A Plasmo-powered extension injected into JobStreet and MYFutureJobs to capture and sync job applications directly with a single click.
+* **Browser Extension Tracker:** A Plasmo-powered extension injected into JobStreet and MYFutureJobs to capture and sync job applications directly with a single click. 
 * **Multi-Platform Scrapers:** Automated Scrapy spiders targeting portal listings like MYFutureJobs, LinkedIn, and RemoteOK.
 * **Smart Information Extraction:** NLP and regex cleaning pipelines to parse unstructured job descriptions into structured skill sets, salary ranges, and metadata.
 * **Embedded Analytics Warehouse:** Powered by DuckDB for high-performance analytical queries without requiring heavy database server infrastructure.
 * **RESTful API Service:** Built with FastAPI to serve job market data, metrics, and search queries with high performance and automatic documentation.
 * **Interactive Dashboard:** A Streamlit-powered user interface to visualize job trends, salary distributions, and in-demand skills.
-
----
-
-## The Technology Stack
-
-| Component | Technology | Description & Responsibilities |
-| :--- | :--- | :--- |
-| **Browser Extension** | Plasmo, React, TypeScript | Injects floating tracker buttons into job portals to capture application metadata. |
-| **Web Scraping** | Scrapy | Extracts raw job listings, descriptions, and metadata from target sites. |
-| **Processing & NLP** | Python (Regex / SpaCy / Custom Parsers) | Cleans and extracts granular details like required skills, experience levels, and compensation. |
-| **Data Warehouse** | DuckDB | Embedded columnar database for rapid analytical queries and storage. |
-| **Backend API** | FastAPI, Uvicorn | High-performance asynchronous API serving job listings and metadata. |
-| **Frontend / Dashboard** | Streamlit | Interactive data visualization and exploration interface. |
-| **Workflow & Testing** | Pytest, GitHub Actions | Automated test runner and continuous integration pipeline. |
-
----
-
-## Getting Started Locally
-
-To run the complete Job Market stack locally, follow these steps to set up your environment and dependencies.
-
-### 1. Environment & Dependencies Setup
-```bash
-# Clone the repository
-git clone https://github.com/mhdhamka/job-market.git
-cd job-market
-
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-```
-
-### 2. Run the Daily Job Pipeline (Data Ingestion)
-```Bash
-# Scrape and store initial job data into DuckDB
-python src/workflows/daily_job_pipeline.py
-
-```
-
-### 3. Running Services
-
-#### Run the FastAPI Backend
-
-```bash
-uvicorn src.api.main:app --reload --port 8000
-
-```
-
-#### Launch the Streamlit Dashboard
-
-```bash
-streamlit run src/dashboard/app.py
-
-```
-### 4. Installing the Plasmo Browser Extension
-```Bash
-# Navigate to extension directory
-cd extension
-
-# Install Node dependencies
-npm install
-
-# Build extension for development
-npm run dev
-```
-Open your browser (Chrome/Edge), go to chrome://extensions/, enable Developer mode, click Load unpacked, and select the extension/build/chrome-mv3-dev directory.
-
-#### Run Automated Tests
-
-```bash
-pytest tests/
-
-```
-
----
-
-## Project Structure
-
-```text
-job-market/
-│
-├── .env.example                # Template for environment variables
-├── .gitignore                  # Ignore venv, DuckDB files, logs, cache
-├── README.md                   # Project overview and setup instructions
-├── requirements.txt            # Python dependencies
-│
-├── data/
-│   └── job_market.duckdb       # Local DuckDB database file (git-ignored)
-|
-├── extension/                  # Plasmo Browser Extension (Job Tracker)
-│   ├── package.json            # Node dependencies (React/TypeScript)
-│   ├── tsconfig.json           # TypeScript configuration
-│   └── src/
-│       ├── popup.tsx           # Extension popup interface
-│       ├── content.ts          # Content script injected into JobStreet / MYFutureJobs
-│       └── background.ts       # Service worker
-│
-├── notebooks/                  # Jupyter notebooks for prototyping & EDA
-│   └── exploratory_analysis.ipynb
-│
-├── src/                        # Core application source code
-│   │
-│   ├── scrapers/               # Web scraping module
-│   │   ├── __init__.py
-│   │   ├── items.py
-│   │   ├── middlewares.py
-│   │   ├── pipelines.py
-│   │   └── spiders/
-│   │       ├── __init__.py
-│   │       ├── indeed_spider.py
-│   │       ├── jobstreet_spider.py
-│   │       ├── linkedin_spider.py
-│   │       ├── myfuturejobs_spider.py
-│   │       └── remoteok_spider.py
-│   │
-│   ├── processing/             # Data cleaning & NLP/Regex extraction
-│   │   ├── __init__.py
-│   │   ├── cleaner.py
-│   │   └── extractor.py
-│   │
-│   ├── database/               # Data warehouse layer
-│   │   ├── __init__.py
-│   │   ├── connection.py
-│   │   └── schemas.py
-│   │
-│   ├── workflows/              # Pipeline orchestration (Prefect/Airflow)
-│   │   ├── __init__.py
-│   │   └── daily_job_pipeline.py
-│   │
-│   ├── api/                    # FastAPI backend service
-│   │   ├── __init__.py
-│   │   ├── main.py
-│   │   └── routes.py
-│   │
-│   └── dashboard/              # Streamlit frontend
-│       ├── __init__.py
-│       └── app.py
-│
-└── tests/                      # Automated tests
-    ├── __init__.py
-    ├── test_api.py
-    ├── test_cleaner.py
-    ├── test_extractor.py
-    ├── test_matcher.py
-    └── test_spiders.py
-
-```
 
 ---
 
