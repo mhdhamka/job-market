@@ -8,9 +8,7 @@
 [Live Demo](https://jobmarketintel.streamlit.app/) · [Documentation](./docs/) · [Report Bug](https://github.com/mhdhamka/kerja-scraper/issues) · [Request Feature](https://github.com/mhdhamka/kerja-scraper/issues)
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Plasmo](https://img.shields.io/badge/Plasmo-Extension-000000?style=for-the-badge&logo=plasmo&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![DuckDB](https://img.shields.io/badge/DuckDB-Database-FFF000?style=for-the-badge&logo=duckdb&logoColor=black)
 ![Scrapy](https://img.shields.io/badge/Scrapy-Web%20Scraping-121212?style=for-the-badge&logo=scrapy&logoColor=white)
 
